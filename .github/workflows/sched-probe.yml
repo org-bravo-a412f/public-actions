@@ -1,0 +1,18 @@
+name: sched-probe
+
+# Sonda temporaria: mede se o teto de execucoes agendadas do GitHub e por
+# workflow ou por repositorio. Mesma janela e mesma quantidade de pedidos do
+# public-repo-watch, em minutos diferentes. Nao alerta e nao le secret nenhum.
+on:
+  schedule:
+    - cron: '22,52 10-23 * * *'
+    - cron: '22,52 0 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: date -u +'sonda %Y-%m-%dT%H:%M:%SZ'
