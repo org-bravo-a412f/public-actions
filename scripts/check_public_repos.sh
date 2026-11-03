@@ -143,6 +143,8 @@ for channel in "${CHANNELS[@]}"; do
 done
 if [ "$delivered" -eq 0 ]; then
   echo "ERRO: alerta NAO entregue por nenhum canal." >&2
+  exit 1
 fi
 
-exit 1
+echo "Para parar o alerta: torne o repositorio privado, ou inclua-o no baseline em STATE_REPO."
+exit "$failed"

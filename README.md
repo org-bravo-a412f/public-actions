@@ -14,3 +14,17 @@ O baseline fica em outro repositorio, apontado pelo secret `STATE_REPO`.
 | `SLACK_WEBHOOK_URL` | canal Slack |
 
 Pelo menos um canal de alerta e obrigatorio.
+
+## Codigo de saida
+
+Vermelho significa **monitor quebrado**, nao exposicao encontrada.
+
+| Situacao | Saida |
+|---|---|
+| Nada novo | 0 |
+| Repo publico novo, alerta entregue em algum canal | 0 |
+| Repo publico novo, nenhum canal entregou | 1 |
+| Baseline ilegivel ou invalido, API falhando, conta inexistente | 1 |
+
+Assim um job vermelho e sinal confiavel de que o vigia caiu, e vale ligar
+e-mail de falha de workflow nas notificacoes do GitHub.
