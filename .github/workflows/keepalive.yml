@@ -1,0 +1,28 @@
+name: keepalive
+
+on:
+  schedule:
+    - cron: '19 4 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: keepalive
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Commit vazio
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit --allow-empty -m keepalive
+          git push origin "HEAD:$BRANCH"

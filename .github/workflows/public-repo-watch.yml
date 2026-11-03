@@ -1,0 +1,39 @@
+name: public-repo-watch
+
+on:
+  schedule:
+    # Pedidos concentrados na janela de atividade medida (07h-21h de Brasilia).
+    # O agendador do GitHub entrega ~5 execucoes/dia independente de quantas se
+    # pede, entao concentrar os pedidos vale mais que aumentar a frequencia.
+    - cron: '7,37 10-23 * * *'
+    - cron: '7,37 0 * * *'
+  workflow_dispatch:
+    inputs:
+      state_ref:
+        description: 'Ref do baseline em STATE_REPO (vazio = branch default)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-repo-watch
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checar repositorios publicos
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STATE_REPO: ${{ secrets.STATE_REPO }}
+          STATE_REF: ${{ inputs.state_ref }}
+          STATE_TOKEN: ${{ secrets.STATE_TOKEN }}
+          CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
+          CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: ./scripts/check_public_repos.sh
