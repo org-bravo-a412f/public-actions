@@ -2,7 +2,11 @@ name: public-repo-watch
 
 on:
   schedule:
-    - cron: '7,37 * * * *'
+    # Pedidos concentrados na janela de atividade medida (07h-21h de Brasilia).
+    # O agendador do GitHub entrega ~5 execucoes/dia independente de quantas se
+    # pede, entao concentrar os pedidos vale mais que aumentar a frequencia.
+    - cron: '7,37 10-23 * * *'
+    - cron: '7,37 0 * * *'
   workflow_dispatch:
     inputs:
       state_ref:
