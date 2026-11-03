@@ -1,0 +1,39 @@
+name: public-repo-watch-b
+
+on:
+  schedule:
+    # Segunda copia do monitor, em minutos deslocados, para testar se o teto de
+    # execucoes agendadas do GitHub e por workflow ou por repositorio. Alerta
+    # junto com o principal, entao deteccao gera aviso em dobro.
+    - cron: '22,52 10-23 * * *'
+    - cron: '22,52 0 * * *'
+  workflow_dispatch:
+    inputs:
+      state_ref:
+        description: 'Ref do baseline em STATE_REPO (vazio = branch default)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-repo-watch-b
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checar repositorios publicos
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          STATE_REPO: ${{ secrets.STATE_REPO }}
+          STATE_REF: ${{ inputs.state_ref }}
+          STATE_TOKEN: ${{ secrets.STATE_TOKEN }}
+          CALLMEBOT_PHONE: ${{ secrets.CALLMEBOT_PHONE }}
+          CALLMEBOT_APIKEY: ${{ secrets.CALLMEBOT_APIKEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: ./scripts/check_public_repos.sh
